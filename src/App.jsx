@@ -21,37 +21,35 @@ function App() {
   const [isDetailScreenOpen, setIsDetailScreenOpen] = useState(false);
   const [detailedText, setDetailedText] = useState("");
 
- // --- SECURE LIVE BACKEND AUDIO ENGINE ---
-  // 🚀 Naya Upgrade: 'autoMic' switch add kiya hai!
+ // --- 🚀 BULLETPROOF ₹0 AUDIO ENGINE (VIA BACKEND) ---
   const speakText = async (textToSpeak, autoMic = false) => {
     try {
-      console.log("Live Backend ko aawaz banane bhej rahe hain...");
-
-      // Seedha Render wale Live Server se aawaz mangwa rahe hain!
-      const response = await fetch('https://nsavvy-api.onrender.com/api/tts', {
+      console.log("🗣️ Requesting Premium Audio from Backend...");
+      
+      // Apne backend se aawaz mango (Agar Render par push kar diya ho toh localhost ki jagah render ka link daal dena)
+      const response = await fetch('https://nsavvy-api.onrender.com/api/tts', { 
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: textToSpeak })
       });
 
       const data = await response.json();
-
-      if (data.audio) {
-        const audio = new Audio(`data:audio/mp3;base64,${data.audio}`);
+      
+      if (data.audioContent) {
+        // Backend ne jo aawaz bheji, usko play karo!
+        const audio = new Audio("data:audio/mp3;base64," + data.audioContent);
         audio.play();
 
         // 🎙️ THE CONTINUOUS VOICE LOOP INJECTION 🎙️
         audio.onended = () => {
           if (autoMic) {
-            console.log("🗣️ AI ki aawaz khatam! Mic auto-starting...");
+            console.log("🗣️ Premium AI chup ho gaya. Auto-starting Mic!");
             startListening(); // AI ke chup hote hi mic khud ON!
           }
         };
       }
     } catch (error) {
-      console.error("Audio generation me error aaya:", error);
+      console.error("Audio fetch me error aaya:", error);
     }
   };
   // --- END OF AUDIO ENGINE ---

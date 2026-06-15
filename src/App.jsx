@@ -43,8 +43,13 @@ function App() {
         audio.onended = () => {
           if (autoMic) {
             console.log("🗣️ AI chup ho gaya. VIP Mode ON kar raha hu!");
-            setIsConversationMode(true); // VIP Pass de diya!
-            startListening(); // Mic wapas ON!
+            isConversationModeRef.current = true; 
+
+            // 🛑 BROWSER SHOCK FIX: Mic start karne se pehle 1 second ruko!
+            console.log("⏳ Mic chalu karne ke liye 1 second wait kar raha hu...");
+            setTimeout(() => {
+                startListening(); // 1 second baad mic ON hoga!
+            }, 1000); 
           }
         };
       }

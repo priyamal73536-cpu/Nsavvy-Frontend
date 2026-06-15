@@ -15,23 +15,6 @@ function App() {
     { id: 1, sender: 'ai', text: 'NSavvy AI Voice Core ready hai! Kuch puchiye Piyush bhai, main bol kar jawab dunga. 😎', time: '9:10 PM' },
   ]);
 
-  // --- 🚀 AUTO-MIC SUBMISSION ENGINE ---
-  useEffect(() => {
-    // Agar mic abhi-abhi band hua hai (listening false hua), 
-    // Hum Conversation Mode mein hain, aur user ne kuch bola hai (transcript khali nahi hai)
-    if (!isListening && isConversationMode && userInput && userInput.trim().length > 0) {
-      
-      console.log("🎤 Auto-Mic ne suna:", transcript);
-      
-      // Sawaal seedha AI ko bhej do bina Wake-Word check kiye!
-      triggerAIResponse(userInput); 
-      
-      // VIP Pass wapas le lo agle round tak
-      setIsConversationMode(false); 
-      //resetTranscript();
-    }
-  }, [isListening, isConversationMode, userInput]);
-
   const recognitionRef = useRef(null);
   const silenceTimerRef = useRef(null);
 
@@ -184,13 +167,25 @@ function App() {
     rec.onresult = (event) => {
       const spokenText = event.results[0][0].transcript.toLowerCase().trim();
       const wakeWord = aiName.toLowerCase().trim();
-
+      
       console.log(`Suna: "${spokenText}" | Chahiye tha: "${wakeWord}"`);
 
-      // WAKE-WORD CHECK
+      // --- 🚀 THE VIP PASS BYPASS (Continuous Loop) ---
+      // Agar AI chup hokar khud mic ON karta hai, toh Wake-Word mat mango!
+      if (isConversationMode) {
+        console.log("🗣️ VIP Mode ON: Bina naam pukare sun raha hoon...");
+        setIsConversationMode(false); // VIP Pass wapas le lo agle round tak
+        
+        if (spokenText.length > 2) {
+            triggerAIResponse(spokenText); // Seedha bhej do!
+        }
+        return; // Engine ko yahin rok do, neeche wala code mat chalao
+      }
+
+      // --- 🛑 PURANA WAKE-WORD CHECK ---
       if (wakeWord !== '' && spokenText.includes(wakeWord)) {
         const command = spokenText.replace(wakeWord, '').trim();
-
+        
         if (command.length > 2) {
           triggerAIResponse(command); // Sawaal Dimaag tak gaya!
         } else {
@@ -200,7 +195,7 @@ function App() {
         console.log("Ignored: Wake word match nahi hua.");
       }
     };
-
+    
     rec.onerror = (event) => {
       console.error("Mic Error:", event.error);
       setIsListening(false);

@@ -19,7 +19,7 @@ function App() {
   useEffect(() => {
     // Agar mic abhi-abhi band hua hai (listening false hua), 
     // Hum Conversation Mode mein hain, aur user ne kuch bola hai (transcript khali nahi hai)
-    if (!listening && isConversationMode && transcript.trim().length > 0) {
+    if (!isListening && isConversationMode && transcript && transcript.trim().length > 0) {
       
       console.log("🎤 Auto-Mic ne suna:", transcript);
       
@@ -30,7 +30,7 @@ function App() {
       setIsConversationMode(false); 
       resetTranscript();
     }
-  }, [listening, isConversationMode, transcript]);
+  }, [isListening, isConversationMode, transcript]);
 
   const recognitionRef = useRef(null);
   const silenceTimerRef = useRef(null);

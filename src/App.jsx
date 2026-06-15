@@ -7,12 +7,30 @@ function App() {
   const [showChat, setShowChat] = useState(false);
   const [micVolume, setMicVolume] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
+  const [isConversationMode, setIsConversationMode] = useState(false);
   // AI Name State Logic
   const [aiName, setAiName] = useState(localStorage.getItem('aiName') || '');
   const [isNameSet, setIsNameSet] = useState(!!localStorage.getItem('aiName'));
   const [messages, setMessages] = useState([
     { id: 1, sender: 'ai', text: 'NSavvy AI Voice Core ready hai! Kuch puchiye Piyush bhai, main bol kar jawab dunga. 😎', time: '9:10 PM' },
   ]);
+
+  // --- 🚀 AUTO-MIC SUBMISSION ENGINE ---
+  useEffect(() => {
+    // Agar mic abhi-abhi band hua hai (listening false hua), 
+    // Hum Conversation Mode mein hain, aur user ne kuch bola hai (transcript khali nahi hai)
+    if (!listening && isConversationMode && transcript.trim().length > 0) {
+      
+      console.log("🎤 Auto-Mic ne suna:", transcript);
+      
+      // Sawaal seedha AI ko bhej do bina Wake-Word check kiye!
+      triggerAIResponse(transcript); 
+      
+      // VIP Pass wapas le lo agle round tak
+      setIsConversationMode(false); 
+      resetTranscript();
+    }
+  }, [listening, isConversationMode, transcript]);
 
   const recognitionRef = useRef(null);
   const silenceTimerRef = useRef(null);
@@ -40,11 +58,13 @@ function App() {
         const audio = new Audio("data:audio/mp3;base64," + data.audioContent);
         audio.play();
 
-        // 🎙️ THE CONTINUOUS VOICE LOOP INJECTION 🎙️
+       // 🎙️ THE CONTINUOUS VOICE LOOP INJECTION 🎙️
         audio.onended = () => {
           if (autoMic) {
-            console.log("🗣️ Premium AI chup ho gaya. Auto-starting Mic!");
-            startListening(); // AI ke chup hote hi mic khud ON!
+            console.log("🗣️ AI chup ho gaya. Conversation Mode ON!");
+            setIsConversationMode(true); // VIP Pass de diya!
+            resetTranscript(); // Purana text clear kar do
+            startListening(); // Mic ON kar do
           }
         };
       }

@@ -19,18 +19,18 @@ function App() {
   useEffect(() => {
     // Agar mic abhi-abhi band hua hai (listening false hua), 
     // Hum Conversation Mode mein hain, aur user ne kuch bola hai (transcript khali nahi hai)
-    if (!isListening && isConversationMode && transcript && transcript.trim().length > 0) {
+    if (!isListening && isConversationMode && userInput && userInput.trim().length > 0) {
       
       console.log("🎤 Auto-Mic ne suna:", transcript);
       
       // Sawaal seedha AI ko bhej do bina Wake-Word check kiye!
-      triggerAIResponse(transcript); 
+      triggerAIResponse(userInput); 
       
       // VIP Pass wapas le lo agle round tak
       setIsConversationMode(false); 
-      resetTranscript();
+      //resetTranscript();
     }
-  }, [isListening, isConversationMode, transcript]);
+  }, [isListening, isConversationMode, userInput]);
 
   const recognitionRef = useRef(null);
   const silenceTimerRef = useRef(null);

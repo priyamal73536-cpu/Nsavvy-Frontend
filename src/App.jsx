@@ -22,12 +22,11 @@ function App() {
   const [isDetailScreenOpen, setIsDetailScreenOpen] = useState(false);
   const [detailedText, setDetailedText] = useState("");
 
- // --- 🚀 BULLETPROOF ₹0 AUDIO ENGINE (VIA BACKEND) ---
-  const speakText = async (textToSpeak, autoMic = false) => {
+ // --- 🔊 AUDIO ENGINE WITH AUTO-MIC LOOP ---
+  const speakText = async (textToSpeak, autoMic = false) => { // 👈 Yahan autoMic lagana zaroori hai
     try {
-      console.log("🗣️ Requesting Premium Audio from Backend...");
+      console.log("🔊 Aawaz mangwa raha hu...");
       
-      // Apne backend se aawaz mango (Agar Render par push kar diya ho toh localhost ki jagah render ka link daal dena)
       const response = await fetch('https://nsavvy-api.onrender.com/api/tts', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -35,24 +34,22 @@ function App() {
       });
 
       const data = await response.json();
-      
+
       if (data.audioContent) {
-        // Backend ne jo aawaz bheji, usko play karo!
         const audio = new Audio("data:audio/mp3;base64," + data.audioContent);
         audio.play();
 
-       // 🎙️ THE CONTINUOUS VOICE LOOP INJECTION 🎙️
+        // 🎙️ THE CONTINUOUS LOOP ACTIVATOR 🎙️
         audio.onended = () => {
           if (autoMic) {
-            console.log("🗣️ AI chup ho gaya. Conversation Mode ON!");
+            console.log("🗣️ AI chup ho gaya. VIP Mode ON kar raha hu!");
             setIsConversationMode(true); // VIP Pass de diya!
-            resetTranscript(); // Purana text clear kar do
-            startListening(); // Mic ON kar do
+            startListening(); // Mic wapas ON!
           }
         };
       }
     } catch (error) {
-      console.error("Audio fetch me error aaya:", error);
+      console.error("Audio Engine Error:", error);
     }
   };
   // --- END OF AUDIO ENGINE ---
@@ -137,7 +134,7 @@ function App() {
             hasDetails: false 
           }
         ]);
-        speakText(premiumErrorMsg); 
+        speakText(premiumErrorMsg, true); 
       }
     }
   };
@@ -189,13 +186,13 @@ function App() {
         if (command.length > 2) {
           triggerAIResponse(command); // Sawaal Dimaag tak gaya!
         } else {
-          speakText("Haan boss, main ready hoon, bataiye?"); // Sirf naam pukara
+          speakText("Haan boss, main ready hoon, bataiye?", true); // Sirf naam pukara
         }
       } else {
         console.log("Ignored: Wake word match nahi hua.");
       }
     };
-    
+
     rec.onerror = (event) => {
       console.error("Mic Error:", event.error);
       setIsListening(false);
